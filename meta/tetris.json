@@ -1,0 +1,488 @@
+[
+  {
+    "tile_hash": 2014890637,
+    "bg_color": [
+      179,
+      60,
+      15,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "bg_for_z": 5,
+    "bg_back_z": 5,
+    "win_z": 0,
+    "obj_z": 0,
+    "obj_behind_z": 0,
+    "flags": 0
+  },
+  {
+    "tile_hash": 3833321182,
+    "bg_color": [
+      179,
+      60,
+      15,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "bg_for_z": 5,
+    "bg_back_z": 5,
+    "win_z": 0,
+    "obj_z": 0,
+    "obj_behind_z": 0,
+    "flags": 0
+  },
+  {
+    "tile_hash": 1519623030,
+    "bg_color": [
+      179,
+      60,
+      15,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "bg_for_z": 5,
+    "bg_back_z": 5,
+    "win_z": 0,
+    "obj_z": 0,
+    "obj_behind_z": 0,
+    "flags": 0
+  },
+  {
+    "tile_hash": 1377764779,
+    "bg_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 2165396597,
+    "bg_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 2810592793,
+    "bg_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 2065174346,
+    "bg_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 1612280218,
+    "bg_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 3030379613,
+    "bg_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      25,
+      0,
+      255,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 1982320352,
+    "bg_color": [
+      208,
+      148,
+      0,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      208,
+      148,
+      0,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 208098782,
+    "bg_color": [
+      248,
+      12,
+      245,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      248,
+      12,
+      245,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 1795339981,
+    "bg_color": [
+      111,
+      0,
+      255,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      111,
+      0,
+      255,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 950992802,
+    "bg_color": [
+      255,
+      0,
+      44,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      255,
+      0,
+      44,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 624188805,
+    "bg_color": [
+      71,
+      217,
+      25,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      71,
+      217,
+      25,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 580304439,
+    "bg_color": [
+      7,
+      165,
+      219,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      7,
+      165,
+      219,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 2175313400,
+    "bg_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "bg_for_z": 5,
+    "bg_back_z": 5,
+    "win_z": 0,
+    "obj_z": 0,
+    "obj_behind_z": 0,
+    "flags": 0
+  },
+  {
+    "tile_hash": 1338986533,
+    "bg_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  },
+  {
+    "tile_hash": 2259839499,
+    "bg_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "win_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "obj_color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "bg_for_z": 3,
+    "bg_back_z": 3,
+    "win_z": 3,
+    "obj_z": 3,
+    "obj_behind_z": 3,
+    "flags": 1
+  }
+]
