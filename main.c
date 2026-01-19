@@ -432,6 +432,7 @@ static int on_gb_running_state(app_state *app){
 	* Interlaced mode could be enabled here to help speed up
 	* drawing.
 	*/
+
 	if(delay < 0) return 0;
 	usleep(delay);
 
@@ -535,7 +536,8 @@ static int init(app_state *app, char* rom_filename){
 
 	// Init LCD
 	gb_init_lcd(&app->gb, &lcd_render_line);
-	//gb.direct.interlace = true;
+	//app->gb.direct.interlace = true;
+	//app->gb.direct.frame_skip = true;
 
 	// Init framebuffers
 	app->planes_distance = PLANES_DISTANCE_DEFAULT;

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <raylib.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -424,9 +425,7 @@ void lcd_render_line(gb_s *gb){
 	if (check_interlaced_line_skip(gb)) return;
 	
 	uint8_t pixels[LCD_WIDTH] = {0};
-	for (int i=0; i<2; i++){
-        render_background_line(gb, pixels);
-        render_window_line(gb, pixels);
-        render_sprites_line(gb, pixels);
-    }
+    render_background_line(gb, pixels);
+    render_window_line(gb, pixels);
+    render_sprites_line(gb, pixels);
 }
