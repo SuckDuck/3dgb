@@ -120,6 +120,7 @@ void save_meta(char* filename, meta_t *meta){
 void load_meta_0_1_0(int fd, meta_t **meta){
 	printf("loading_meta_0_1_0\n");
 	free_meta(*meta);
+	*meta = NULL;
 
 	// READ THE META COUNT
 	uint32_t meta_q;

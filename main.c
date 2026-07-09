@@ -38,6 +38,7 @@ void sample_vram_tiles(gb_s *gb, tile_t *tiles){
 
 void handle_input(app_state *app){
 	app->gb.direct.joypad = 255; //clean joypad state
+	if (app->profile_editor.open && app->profile_editor.filename_editing) return;
 	if (IsKeyDown(KEY_RIGHT))     app->gb.direct.joypad &= ~JOYPAD_RIGHT;
 	if (IsKeyDown(KEY_LEFT))      app->gb.direct.joypad &= ~JOYPAD_LEFT;
 	if (IsKeyDown(KEY_UP))        app->gb.direct.joypad &= ~JOYPAD_UP;
@@ -64,6 +65,8 @@ void exec_cmd(app_state *app, int argc, char **argv){
 			return;
 		}
 
+		profile_push_undo(app, "command bar");
+
 		// BACKGROUND COLOR
 		if (!strcmp(argv[1], "bg_color")){
 			if (argc != 5){
@@ -87,6 +90,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 				NULL, NULL
 			);
 
+			profile_mark_dirty(app, "command bar");
 			return;		
 		}
 
@@ -113,6 +117,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 				NULL, NULL
 			);
 
+			profile_mark_dirty(app, "command bar");
 			return;
 		}
 
@@ -139,6 +144,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 				NULL, NULL
 			);
 
+			profile_mark_dirty(app, "command bar");
 			return;
 		}
 
@@ -158,6 +164,9 @@ void exec_cmd(app_state *app, int argc, char **argv){
 				&z, &z,
 				&z, &z
 			);
+
+			profile_mark_dirty(app, "command bar");
+			return;
 		}
 
 		// BG FOR Z DEPTH
@@ -177,6 +186,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 				NULL, NULL
 			);
 
+			profile_mark_dirty(app, "command bar");
 			return;
 		}
 
@@ -197,6 +207,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 				NULL, NULL
 			);
 
+			profile_mark_dirty(app, "command bar");
 			return;
 		}
 
@@ -217,6 +228,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 				NULL, NULL
 			);
 
+			profile_mark_dirty(app, "command bar");
 			return;
 		}
 
@@ -237,6 +249,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 				&z, NULL
 			);
 
+			profile_mark_dirty(app, "command bar");
 			return;
 		}
 
@@ -257,6 +270,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 				NULL, &z
 			);
 
+			profile_mark_dirty(app, "command bar");
 			return;
 		}
 
@@ -273,6 +287,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 		}
 
 		save_meta(argv[1], app->meta);
+		profile_mark_saved(app);
 	}
 
 	// LOAD META COMMAND
@@ -283,6 +298,7 @@ void exec_cmd(app_state *app, int argc, char **argv){
 		}
 
 		load_meta(argv[1], &app->meta);
+		profile_after_load(app);
 	}
 
 }
@@ -291,6 +307,21 @@ void reset_framebuffers(app_state *app){
 	memset( &app->framebuffers[0], 
 		0, sizeof(framebuffer_t)*Z_LAYERS
 	);
+}
+
+static void redraw_inspection_frame(app_state *app){
+	uint8_t old_ly = app->gb.hram_io[IO_LY];
+	uint8_t old_window_clear = app->gb.display.window_clear;
+
+	reset_framebuffers(app);
+	app->gb.display.window_clear = 0;
+	for (int y=0; y<LCD_HEIGHT; y++){
+		app->gb.hram_io[IO_LY] = (uint8_t)y;
+		lcd_render_line(&app->gb);
+	}
+
+	app->gb.hram_io[IO_LY] = old_ly;
+	app->gb.display.window_clear = old_window_clear;
 }
 
 void draw_to_framebuffer(app_state *app, uint32_t z, int x, int y, Color color){
@@ -399,45 +430,7 @@ void gb_error(gb_s *gb, const enum gb_error_e gb_err, const uint16_t val){
 
 /* <== Frontend ================================================> */
 
-static int on_gb_running_state(app_state *app){
-	if (app->paused) return 0;
-	const double target_speed_us = 1000000.0 / VERTICAL_SYNC;
-	int_fast16_t delay;
-	unsigned long start, end;
-	struct timeval timecheck;
-	int state;
-
-	gettimeofday(&timecheck, NULL);
-	start = (long)timecheck.tv_sec * 1000000 +
-		(long)timecheck.tv_usec;
-
-	handle_input(app);
-
-	/* Execute CPU cycles until the screen has to be redrawn. */
-	gb_run_frame(&app->gb);
-
-	gettimeofday(&timecheck, NULL);
-	end = (long)timecheck.tv_sec * 1000000 + (long)timecheck.tv_usec;
-
-	// Transition to commandBar
-	if (IsKeyPressed(KEY_SPACE)){
-		app->state_machine = ON_COMMAND_BAR_STATE;
-		return 0;
-	}
-	
-	delay = target_speed_us - (end - start);
-
-	/* If it took more than the maximum allowed time to draw frame,
-	* do not delay.
-	* Interlaced mode could be enabled here to help speed up
-	* drawing.
-	*/
-
-	if(delay < 0) return 0;
-	usleep(delay);
-
-	// TILES INSPECTOR LOGIC
-	sample_vram_tiles(&app->gb, tiles_on_vram);
+static void update_vram_keyboard_selection(void){
 	if (IsKeyPressed(KEY_D) && selected_tile < VRAM_TILE_COUNT-1)
 		selected_tile++;
 	if (IsKeyPressed(KEY_S) && selected_tile < VRAM_TILE_COUNT-VRAM_INSPECTOR_WIDTH)
@@ -446,8 +439,49 @@ static int on_gb_running_state(app_state *app){
 		selected_tile--;
 	if (IsKeyPressed(KEY_W) && selected_tile >= VRAM_INSPECTOR_WIDTH)
 		selected_tile-=VRAM_INSPECTOR_WIDTH;
+}
 
-	return 0;
+/* Execute CPU cycles until the screen has to be redrawn. */
+static int on_gb_running_state(app_state *app){
+	if (app->paused){
+		app->gb.direct.joypad = 255;
+		redraw_inspection_frame(app);
+		sample_vram_tiles(&app->gb, tiles_on_vram);
+		update_vram_keyboard_selection();
+		return 1;
+	}
+
+	const double target_speed_us = 1000000.0 / VERTICAL_SYNC;
+	int_fast16_t delay;
+	unsigned long start, end;
+	struct timeval timecheck;
+
+	gettimeofday(&timecheck, NULL);
+	start = (long)timecheck.tv_sec * 1000000 +
+		(long)timecheck.tv_usec;
+
+	reset_framebuffers(app);
+	handle_input(app);
+	gb_run_frame(&app->gb);
+
+	gettimeofday(&timecheck, NULL);
+	end = (long)timecheck.tv_sec * 1000000 + (long)timecheck.tv_usec;
+
+	delay = target_speed_us - (end - start);
+
+	/* If it took more than the maximum allowed time to draw frame,
+	* do not delay.
+	* Interlaced mode could be enabled here to help speed up
+	* drawing.
+	*/
+
+	if(!app->paused && delay > 0) usleep(delay);
+
+	// TILES INSPECTOR LOGIC
+	sample_vram_tiles(&app->gb, tiles_on_vram);
+	update_vram_keyboard_selection();
+
+	return 1;
 }
 
 static void on_command_bar_state(app_state *app){
@@ -456,13 +490,16 @@ static void on_command_bar_state(app_state *app){
     while (true) {
         pressedChar = GetCharPressed();
         if (pressedChar == 0) break;
-        app->commandbar.text[app->commandbar.cursor++] = pressedChar;
+        if (app->commandbar.cursor < (int)sizeof(app->commandbar.text) - 1){
+            app->commandbar.text[app->commandbar.cursor++] = pressedChar;
+            app->commandbar.text[app->commandbar.cursor] = '\0';
+        }
     }
 
 	// DELETE CHARACTERS
-    if (app->commandbar.text[0] != '\0' && IsKeyPressed(KEY_BACKSPACE)){
-        app->commandbar.text[app->commandbar.cursor-1] = '\0';
+    if (app->commandbar.cursor > 0 && IsKeyPressed(KEY_BACKSPACE)){
         app->commandbar.cursor--;
+        app->commandbar.text[app->commandbar.cursor] = '\0';
     }
 
 	// CANCEL COMMAND
@@ -496,10 +533,12 @@ static void on_command_bar_state(app_state *app){
 
 static int main_loop(app_state *app){
 	switch (app->state_machine){
-		case GB_RUNNING_STATE:     on_gb_running_state(app);  break;
-		case ON_COMMAND_BAR_STATE: on_command_bar_state(app); break;
+		case GB_RUNNING_STATE:
+			return on_gb_running_state(app);
+		case ON_COMMAND_BAR_STATE:
+			on_command_bar_state(app);
+			return 0;
 	}
-
 	return 0;
 }
 
@@ -544,6 +583,43 @@ static int init(app_state *app, char* rom_filename){
 	app->framebuffers = malloc(sizeof(framebuffer_t)*Z_LAYERS);
 	reset_framebuffers(app);
 
+	app->profile_editor.open = true;
+	app->profile_editor.color_target = PROFILE_COLOR_BG;
+	app->profile_editor.auto_apply = false;
+	app->profile_editor.selected_count = 1;
+	app->profile_editor.selection_anchor = selected_tile;
+	app->profile_editor.drag_selecting = false;
+	app->profile_editor.drag_start_tile = -1;
+	app->profile_editor.drag_current_tile = -1;
+	for (int i=0; i<VRAM_TILE_COUNT; i++){
+		app->profile_editor.selected_tiles[i] = false;
+		app->profile_editor.used_tiles[i] = false;
+	}
+	app->profile_editor.selected_tiles[selected_tile] = true;
+	app->profile_editor.synced_hash = 0;
+	app->profile_editor.synced_target = PROFILE_COLOR_BG;
+	strncpy(app->profile_editor.filename, "profile.meta", sizeof(app->profile_editor.filename)-1);
+	strncpy(app->profile_editor.status, "F1: editor, F2: pause, F6: export", sizeof(app->profile_editor.status)-1);
+	strncpy(app->profile_editor.last_change, "No changes yet", sizeof(app->profile_editor.last_change)-1);
+	strncpy(app->profile_editor.exchange_filename, "profile_import.json", sizeof(app->profile_editor.exchange_filename)-1);
+	strncpy(app->profile_editor.export_dir, "exports", sizeof(app->profile_editor.export_dir)-1);
+	app->profile_editor.import_entry_count = 0;
+	app->profile_editor.import_loaded = false;
+	app->profile_editor.import_preview_existing = 0;
+	app->profile_editor.import_preview_new = 0;
+	app->profile_editor.import_preview_changed_entries = 0;
+	app->profile_editor.import_preview_field_changes = 0;
+	strncpy(app->profile_editor.import_preview_path, "imports/import_preview.json", sizeof(app->profile_editor.import_preview_path)-1);
+	strncpy(app->profile_editor.last_export_path, "No export yet", sizeof(app->profile_editor.last_export_path)-1);
+	app->profile_editor.panel_page = 0;
+	app->profile_editor.dirty = false;
+	app->profile_editor.unsaved_changes = 0;
+	app->profile_editor.confirm_load = 0;
+	app->profile_editor.value_editing_id = 0;
+	app->profile_editor.value_edit_text[0] = '\0';
+	app->profile_editor.undo_stack = calloc(PROFILE_HISTORY_MAX, sizeof(profile_history_entry_t));
+	app->profile_editor.redo_stack = calloc(PROFILE_HISTORY_MAX, sizeof(profile_history_entry_t));
+
 	return 0;
 }
 
@@ -551,6 +627,9 @@ static void shutdown(app_state *app){
 	free(app->framebuffers);
 	free(app->cart_ram);
 	free(app->rom);
+	free_meta(app->meta);
+	free(app->profile_editor.undo_stack);
+	free(app->profile_editor.redo_stack);
 }
 
 int main(int argc, char **argv){
@@ -573,12 +652,10 @@ int main(int argc, char **argv){
 	// App pipeline
 	printf("p1 = %p\n",&app);
 	while(!WindowShouldClose()){
-		if (main_loop(&app) != 0) break;
-		compose_all_framebuffers(&app);
+		int frame_ready = main_loop(&app);
+		if (frame_ready < 0) break;
+		if (frame_ready > 0) compose_all_framebuffers(&app);
 		ray_update(&app);
-		if (app.state_machine == GB_RUNNING_STATE){
-			reset_framebuffers(&app);
-		}
 	}
 
 	// App end
